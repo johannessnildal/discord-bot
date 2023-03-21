@@ -17,7 +17,7 @@ class Client(commands.Bot):
     async def setup_hook(self):
         for ext in self.cogslist:
             await self.load_extension(ext)
-# load cogs ^
+    # load cogs ^
 
     async def on_ready(self):
         print("")
@@ -45,15 +45,9 @@ class Client(commands.Bot):
 
         print("")
         print(Fore.WHITE + "Successfully booted up!")
-        input(Fore.WHITE + "Press " + Fore.RED + "any key " + Fore.WHITE + "to show more info.")
-        print("")
-        print(Fore.WHITE + "----------EXTRA INFO----------")
-        print("Prefix: " + Fore.RED + PREFIX)
-        print("Bot Owner: " + Fore.RED + "MythicalGrizz#5253")
-        print("Bot Version: " + Fore.RED + "1.1.2")
-
+        
         await client.change_presence(activity = discord.Activity(name="/help", type=3))
-# print info message to console on boot and set custom activity ^
+    # print info message to console on boot and set custom activity ^
 
 
 with open('config.json', 'r') as f:

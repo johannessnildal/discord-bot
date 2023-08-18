@@ -69,7 +69,7 @@ class Logger(commands.Cog):
                                 color=discord.Color.red(),
                                 timestamp=datetime.now())
             if message.author is not None:
-                embed.set_author(name=message.author.display_name, icon_url=message.author.avatar.url)
+                embed.set_author(name=message.author.name, icon_url=message.author.avatar.url)
             else:
                 embed.set_author(name="Unknown", icon_url=self.client.user.default_avatar.url)
             embed.add_field(name="Message content", value=message.content or "*empty*")

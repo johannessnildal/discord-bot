@@ -42,11 +42,11 @@ class Client(commands.Bot):
         print(Fore.WHITE + "----------STATS----------")
         print(prfx + " Connected to " + Fore.RED + str(len(client.guilds)) + " servers")
         print(prfx + " Latency is " + Fore.RED + str(round(self.latency, 2)) + "s")
-
-        print("")
-        print(Fore.WHITE + "Successfully booted up!")
         
         await client.change_presence(activity = discord.Activity(name="/help", type=3))
+        
+        print("")
+        print(Fore.WHITE + "Successfully booted up!")
     # print info message to console on boot and set custom activity ^
 
 

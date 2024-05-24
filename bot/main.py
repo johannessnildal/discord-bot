@@ -2,69 +2,86 @@ import discord
 from discord.ext import commands
 from colorama import Back, Fore, Style
 import time
-import json
 import platform
+import os
+from dotenv import load_dotenv
+import glob
 
-
+load_dotenv()
+token = os.getenv("TOKEN")
+prefix = os.getenv("PREFIX")
 
 class Client(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix = commands.when_mentioned_or(PREFIX), intents = discord.Intents().all())
+        super().__init__(command_prefix = commands.when_mentioned_or(prefix), intents = discord.Intents().all()) 
 # defining prefix ^    
 
+        self.cogslist = []
+        for file in glob.glob("cogs/*.py"):
+            cog = file.replace("cogs/", "").replace(".py", "")
+            self.cogslist.append(f"cogs.{cog}")
 
-        self.cogslist = ["cogs.GlobalSlash", "cogs.MainModeration", "cogs.Logger"]
-    async def setup_hook(self):
-        for ext in self.cogslist:
-            await self.load_extension(ext)
-    # load cogs ^
+        async def setup_hook(self):
+            for ext in self.cogslist:
+                await self.load_extension(ext)
+        # load cogs dynamically based on files in cogs subfolder ^
 
     async def on_ready(self):
+        prfx = (Back.BLACK + Fore.WHITE + time.strftime("%H:%M:%S CET", time.gmtime()) + Back.RESET + Fore.WHITE + Style.NORMAL)
         print("")
-        print(Fore.WHITE + "----------WELCOME----------")
-        print(Fore.WHITE + "It's great to see you again. Sincerely, " + Fore.RED + client.user.name + Fore.WHITE + "!")
+        print(Fore.WHITE + "---------- WELCOME ----------")
+        print(Fore.WHITE + "It's great to see you again. Sincerely, " + Fore.RED + bot.user.name + Fore.WHITE + "!")
+
+
+        print("")
+        print(Fore.WHITE + "---------- CONFIG ----------")
+        if token is None:
+            print(prfx + " API Token was" + Fore.RED + " not" + Fore.WHITE + " loaded. Exiting, try again.")
+            exit()
+        else:
+            print(prfx + " API Token was" + Fore.GREEN + " successfully" + Fore.WHITE + " loaded")
+        print (prfx + " Prefix is " + Fore.GREEN + prefix)
         
         print("")
-        print(Fore.WHITE + "----------GENERAL----------")         
-        prfx = (Back.BLACK + Fore.WHITE + time.strftime("%H:%M:%S CET", time.gmtime()) + Back.RESET + Fore.WHITE + Style.NORMAL)
-        print(prfx + " Logged in as " + Fore.RED + client.user.name)
-        print(prfx + " Bot ID " + Fore.RED + str(client.user.id))
+        print(Fore.WHITE + "---------- GENERAL ----------")         
+        print(prfx + " Bot ID " + Fore.RED + str(bot.user.id))
         print(prfx + " Discord Version " + Fore.RED + discord.__version__)
         print(prfx + " Python Version " + Fore.RED + str(platform.python_version()))
-
-        print("")
-        print(Fore.WHITE + "----------INFO----------")        
-        synced = await self.tree.sync()
-        print(prfx + " Synced " + Fore.RED + str(len(synced)) + " slash commands")
-        print(prfx + " Loaded " + Fore.RED + str(len(self.cogslist)) + " cogs")
+        print(prfx + " Running on " + Fore.RED + platform.system() + " " + platform.release())
         
         print("")
-        print(Fore.WHITE + "----------STATS----------")
-        print(prfx + " Connected to " + Fore.RED + str(len(client.guilds)) + " servers")
+        print(Fore.WHITE + "---------- STATS ----------")
+        print(prfx + " Connected to " + Fore.RED + str(len(bot.guilds)) + " servers")
         print(prfx + " Latency is " + Fore.RED + str(round(self.latency, 2)) + "s")
         
-        await client.change_presence(activity = discord.Activity(name="/help", type=3))
+        await bot.change_presence(activity = discord.Activity(name="/help", type=3))
         
         print("")
-        print(Fore.WHITE + "Successfully booted up!")
+        if len(self.cogslist) > 0:
+            print(Fore.WHITE + "---------- COGS ----------")
+            print(prfx + " Loaded " + Fore.RED + str(len(self.cogslist)) + " cog(s)")
+            for ext in self.cogslist:
+                cog_name = ext.split(".")[-1]
+                print(prfx + " Loaded " + Fore.RED + cog_name)
+        
+        print("")
+        print(Fore.WHITE + "---------- BOOT ----------")
+        print(prfx + Fore.GREEN + " Successfully booted up!" + Style.RESET_ALL)
     # print info message to console on boot and set custom activity ^
-
-
-with open('config.json', 'r') as f:
-    data = json.load(f)
-    TOKEN = data["TOKEN"]
-    PREFIX = data["PREFIX"]
     
-client = Client()
-# json config data and client defining ^
+bot = Client()
 
-
-@client.event
+@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Command not found! Try /help")
 # command not found error ^
 
+@bot.command(title = "ping", description = "Pong!")
+async def ping(ctx):
+    await ctx.respond(f"Pong! Latency is {bot.latency}")
+# ping command ^
 
-client.run(TOKEN)
+bot.run(token)
 # run bot ^
+

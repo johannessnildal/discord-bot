@@ -6,24 +6,10 @@ import platform
 import os
 from dotenv import load_dotenv
 import glob
-import asyncio
-from discord.ui import Button, View
 
 load_dotenv()
 token = os.getenv("TOKEN")
 prefix = os.getenv("PREFIX")
-
-class DeleteToggleView(View):
-    def __init__(self, timeout=20):
-        super().__init__(timeout=timeout)
-        self.delete_toggle = True
-
-    @discord.ui.button(label="Keep this message", style=discord.ButtonStyle.gray, emoji="🔒")
-    async def toggle_delete(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.delete_toggle = False
-        button.disabled = True
-        await interaction.response.send_message("Auto-delete has been **disabled**.", ephemeral=True)
-        await interaction.message.edit(view=self)
 
 class Client(commands.Bot):
     def __init__(self):
@@ -77,11 +63,7 @@ class Client(commands.Bot):
             for ext in self.cogslist:
                 cog_name = ext.split(".")[-1]
                 print(prfx + " Loaded " + Fore.BLUE + cog_name)
-        
-        print("")
-        print(Fore.WHITE + "---------- COMMANDS ----------")
-        print(prfx + " Loaded " + Fore.RED + str(len(bot.commands)) + " command(s)")
-        
+
         print("")
         print(Fore.WHITE + "---------- BOOT ----------")
         print(prfx + Fore.GREEN + " Successfully booted up!" + Style.RESET_ALL)
@@ -102,40 +84,6 @@ async def on_command_error(ctx, error):
         embed.set_footer(text="Parry | Errors")
         await ctx.send(embed=embed)
 # Error handling ^
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def clear(ctx, amount: int, ):
-    if amount > 100:
-        await ctx.send("You can't delete more than 100 messages at once!")
-        return
-    elif amount < 1:
-        await ctx.send("You have to delete at least one message!")
-        return
-    await ctx.channel.purge(limit=amount+1)
-    embed = discord.Embed(title="Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
-    embed.add_field(name="Moderator", value=ctx.author.mention)
-    embed.add_field(name="Channel", value=ctx.channel.mention)
-    embed.add_field(name="" , value="...........................", inline=False)
-    embed.add_field(name="" , value="####", inline=False)
-    embed.set_footer(text="Parry | Moderation")
-    
-    view = DeleteToggleView()
-    clearmsg = await ctx.send(embed=embed, view=view)
-    
-    for i in range(20, 0, -1):
-        if not view.delete_toggle:
-            # Remove the countdown field
-            embed.remove_field(3)
-            await clearmsg.edit(embed=embed)
-            break
-        embed.set_field_at(3, name="Countdown", value=f"This message will delete itself in {i}s", inline=False)
-        await clearmsg.edit(embed=embed)
-        await asyncio.sleep(1)
-    
-    if view.delete_toggle:
-        await clearmsg.delete()
-# clear command ^
 
 bot.run(token)
 # run bot ^

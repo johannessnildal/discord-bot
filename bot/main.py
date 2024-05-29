@@ -6,26 +6,41 @@ import platform
 import os
 from dotenv import load_dotenv
 import glob
-import discord
 import asyncio
+from discord.ui import Button, View
 
 load_dotenv()
 token = os.getenv("TOKEN")
 prefix = os.getenv("PREFIX")
 
+class DeleteToggleView(View):
+    def __init__(self, timeout=20):
+        super().__init__(timeout=timeout)
+        self.delete_toggle = True
+
+    @discord.ui.button(label="Keep this message", style=discord.ButtonStyle.gray, emoji="🔒")
+    async def toggle_delete(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.delete_toggle = False
+        button.disabled = True
+        response = await interaction.response.send_message("Auto-delete has been disabled.")
+        await interaction.message.edit(view=self)
+
+        await asyncio.sleep(8)
+        await response.delete()
+
 class Client(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix = commands.when_mentioned_or(prefix), intents = discord.Intents().all()) 
+        super().__init__(command_prefix = commands.when_mentioned_or(prefix), intents = discord.Intents.all()) 
 # defining prefix ^    
 
         self.cogslist = []
         for file in glob.glob("cogs/*.py"):
-            cog = file.replace("cogs/", "").replace(".py", "")
-            self.cogslist.append(f"cogs.{cog}")
-
-        async def setup_hook(self):
-            for ext in self.cogslist:
-                await self.load_extension(ext)
+            try:
+                ext = file.replace("/", ".").replace("\\", ".")[:-3]
+                self.load_extension(ext)
+                self.cogslist.append(ext)
+            except Exception as e:
+                print(f"Failed to load cog {ext}: {e}")
         # load cogs dynamically based on files in cogs subfolder ^
 
     async def on_ready(self):
@@ -64,7 +79,7 @@ class Client(commands.Bot):
             print(prfx + " Loaded " + Fore.RED + str(len(self.cogslist)) + " cog(s)")
             for ext in self.cogslist:
                 cog_name = ext.split(".")[-1]
-                print(prfx + " Loaded " + Fore.RED + cog_name)
+                print(prfx + " Loaded " + Fore.BLUE + cog_name)
         
         print("")
         print(Fore.WHITE + "---------- COMMANDS ----------")
@@ -93,7 +108,7 @@ async def on_command_error(ctx, error):
 
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def clear(ctx, amount: int):
+async def clear(ctx, amount: int, ):
     if amount > 100:
         await ctx.send("You can't delete more than 100 messages at once!")
         return
@@ -107,14 +122,23 @@ async def clear(ctx, amount: int):
     embed.add_field(name="" , value="...........................", inline=False)
     embed.add_field(name="" , value="####", inline=False)
     embed.set_footer(text="Parry | Moderation")
-    clearmsg = await ctx.send(embed=embed)
+    
+    view = DeleteToggleView()
+    clearmsg = await ctx.send(embed=embed, view=view)
+    
     for i in range(20, 0, -1):
-        embed.set_field_at(3, name="", value=f"This message will delete itself in {i}s", inline=False)
+        if not view.delete_toggle:
+            # Remove the countdown field
+            embed.remove_field(3)
+            await clearmsg.edit(embed=embed)
+            break
+        embed.set_field_at(3, name="Countdown", value=f"This message will delete itself in {i}s", inline=False)
         await clearmsg.edit(embed=embed)
         await asyncio.sleep(1)
-    await clearmsg.delete()
+    
+    if view.delete_toggle:
+        await clearmsg.delete()
 # clear command ^
 
 bot.run(token)
 # run bot ^
-

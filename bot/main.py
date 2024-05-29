@@ -6,6 +6,8 @@ import platform
 import os
 from dotenv import load_dotenv
 import glob
+import discord
+import asyncio
 
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -65,6 +67,10 @@ class Client(commands.Bot):
                 print(prfx + " Loaded " + Fore.RED + cog_name)
         
         print("")
+        print(Fore.WHITE + "---------- COMMANDS ----------")
+        print(prfx + " Loaded " + Fore.RED + str(len(bot.commands)) + " command(s)")
+        
+        print("")
         print(Fore.WHITE + "---------- BOOT ----------")
         print(prfx + Fore.GREEN + " Successfully booted up!" + Style.RESET_ALL)
     # print info message to console on boot and set custom activity ^
@@ -74,13 +80,40 @@ bot = Client()
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Command not found! Try /help")
-# command not found error ^
+        embed = discord.Embed(title="⚠️ Error", description="The bot encountered an error, or the command does not exist", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+        embed.add_field(name="Try" , value="`/help` | `/ping`")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed)
+    elif isinstance(error, commands.MissingPermissions):
+        embed = discord.Embed(title="⛔️ Error", description="You do not have the required permissions to use this command", color=discord.Color.red(), timestamp=ctx.message.created_at)
+        embed.add_field(name="Try" , value="Contacting a server staff or administrator")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed)
+# Error handling ^
 
-@bot.command(title = "ping", description = "Pong!")
-async def ping(ctx):
-    await ctx.respond(f"Pong! Latency is {bot.latency}")
-# ping command ^
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def clear(ctx, amount: int):
+    if amount > 100:
+        await ctx.send("You can't delete more than 100 messages at once!")
+        return
+    elif amount < 1:
+        await ctx.send("You have to delete at least one message!")
+        return
+    await ctx.channel.purge(limit=amount+1)
+    embed = discord.Embed(title="Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+    embed.add_field(name="Moderator", value=ctx.author.mention)
+    embed.add_field(name="Channel", value=ctx.channel.mention)
+    embed.add_field(name="" , value="...........................", inline=False)
+    embed.add_field(name="" , value="####", inline=False)
+    embed.set_footer(text="Parry | Moderation")
+    clearmsg = await ctx.send(embed=embed)
+    for i in range(20, 0, -1):
+        embed.set_field_at(3, name="", value=f"This message will delete itself in {i}s", inline=False)
+        await clearmsg.edit(embed=embed)
+        await asyncio.sleep(1)
+    await clearmsg.delete()
+# clear command ^
 
 bot.run(token)
 # run bot ^

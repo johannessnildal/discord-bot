@@ -8,8 +8,8 @@ class GlobalSlash(commands.Cog):
         self.bot = bot
         self.bot.tree.add_command(self.app)
 
-    @bot.command(name = "help", description = "Helpful info and commands")
-    async def help(self, interaction: discord.Interaction):
+    @bot.slash_command(name = "help", description = "Helpful info and commands")
+    async def help(interaction: discord.Interaction):
         embed = discord.Embed(title = "Parry", description = "", color = discord.Color.blurple())
         embed.add_field(name = "Who is Parry?", value = "Parry is a multipurpose bot. It's primarily used to handle moderation tasks to make moderation easier, but also has fun plugins that can be enabled.", inline = False)
         embed.add_field(name = "Dashboard", value = "Everything is controlled through the dashboard. Use */dashboard* to see for yourself!", inline = False)
@@ -22,7 +22,7 @@ class GlobalSlash(commands.Cog):
         await self.bot.tree.sync()
 
     async def cog_unload(self):
-        self.bot.tree.remove_command(self.app.name)
+        self.bot.tree.remove_command(self.app)
         await self.bot.tree.sync()
 
 async def setup(bot: commands.Bot) -> None:

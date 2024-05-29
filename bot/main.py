@@ -22,11 +22,8 @@ class DeleteToggleView(View):
     async def toggle_delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         self.delete_toggle = False
         button.disabled = True
-        response = await interaction.response.send_message("Auto-delete has been disabled.")
+        await interaction.response.send_message("Auto-delete has been **disabled**.", ephemeral=True)
         await interaction.message.edit(view=self)
-
-        await asyncio.sleep(8)
-        await response.delete()
 
 class Client(commands.Bot):
     def __init__(self):

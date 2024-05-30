@@ -11,11 +11,6 @@ class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def ping(self, ctx):
-        await ctx.send(f"Pong! Latency is **{round(self.bot.latency * 1000)}ms**")
-    # ping command ^
-
     @commands.slash_command(title="Help", description="Get a list of commands")
     async def help(self, ctx):
         embed = discord.Embed(title="Help", description="Here is a list of commands", color=discord.Color.brand_red(), timestamp=discord.utils.utcnow())

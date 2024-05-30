@@ -79,6 +79,7 @@ class Moderation(commands.Cog):
                     await clearmsg.delete()
             except ValueError:
                 await ctx.send("Invalid amount parameter. Please provide a number or 'all'.")
+    # clear command ^
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

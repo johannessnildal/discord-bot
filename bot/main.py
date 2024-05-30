@@ -83,6 +83,16 @@ async def on_command_error(ctx, error):
         embed.add_field(name="Try" , value="Contacting a server staff or administrator")
         embed.set_footer(text="Parry | Errors")
         await ctx.send(embed=embed)
+    elif isinstance(error, commands.MissingRequiredArgument):
+        embed = discord.Embed(title="⚠️ Error", description="You are missing required arguments", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+        embed.add_field(name="Try" , value="Check the command syntax and try again")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed)
+    elif isinstance(error, commands.CommandOnCooldown):
+        embed = discord.Embed(title="⏳ Error", description="This command is on cooldown, please try again later", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+        embed.add_field(name="Try" , value="Wait for the cooldown to expire")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed)
 # Error handling ^
 
 bot.run(token)

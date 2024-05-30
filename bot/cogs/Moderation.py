@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
-from discord.ui import Button, View
+from discord.ui import View
 from typing import Union
 
 bot = discord.Bot()
@@ -22,6 +22,8 @@ class DeleteToggleView(View):
 
 cogname = "Parry | Moderation"
 
+log_channels = {}
+
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -31,7 +33,7 @@ class Moderation(commands.Cog):
     async def clear(self, ctx, amount: Union[int, str]):
         if amount == "all":
             await ctx.channel.purge()
-            embed = discord.Embed(title="Clear", description="All messages cleared!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+            embed = discord.Embed(title="🧹 Clear", description="All messages cleared!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
             embed.add_field(name="Moderator", value=ctx.author.mention)
             embed.add_field(name="Channel", value=ctx.channel.mention)
             embed.add_field(name="" , value="####", inline=False)
@@ -59,7 +61,7 @@ class Moderation(commands.Cog):
                     await ctx.send("You have to delete at least one message!")
                     return
                 await ctx.channel.purge(limit=amount+1)
-                embed = discord.Embed(title="Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+                embed = discord.Embed(title="🧹 Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
                 embed.add_field(name="Moderator", value=ctx.author.mention)
                 embed.add_field(name="Channel", value=ctx.channel.mention)
                 embed.add_field(name="" , value="####", inline=False)
@@ -84,6 +86,15 @@ class Moderation(commands.Cog):
                 await ctx.send(embed=embed)
     # clear command ^
 
+    @commands.slash_command(name="log_channel", description="Set the channel where messages will be logged.")
+    @commands.has_permissions(administrator=True)
+    async def set_log_channel(self, ctx, channel: discord.TextChannel):
+        log_channels[ctx.guild.id] = channel.id
+        embed = discord.Embed(title="📜 Log Channel", description=f"Log channel set to {channel.mention}. This message will be deleted shortly.", color=discord.Color.brand_red())
+        embed.set_footer(text=cogname)
+        await ctx.respond(embed=embed, delete_after=10)
+    # set_log_channel command ^
+
     @commands.message_command(name="Log Message")
     @commands.has_permissions(administrator=True)
     async def log_message(self, ctx: commands.Context, message: discord.Message):
@@ -94,10 +105,29 @@ class Moderation(commands.Cog):
         embed.add_field(name="Channel", value=message.channel.mention)
         embed.add_field(name="Jump to message", value=f"[Click here]({message.jump_url})", inline=False)
         embed.set_footer(text=f"Logged by {ctx.author.display_name}")
-        await ctx.send(embed=embed)
+
+        log_channel_id = log_channels.get(ctx.guild.id)
+        if log_channel_id:
+            log_channel = ctx.guild.get_channel(log_channel_id)
+            if log_channel:
+                await log_channel.send(embed=embed)
+            else:
+                await ctx.send("Log channel not found.")
+        else:
+            await ctx.send("Log channel not set.")
 
         embed2 = discord.Embed(title="Message Logged", description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!", color=discord.Color.brand_red())
-        await ctx.respond(embed=embed2, ephemeral=True, delete_after=4) 
+        await ctx.respond(embed=embed2, ephemeral=True, delete_after=8)
+        log_channel_id = log_channels.get(ctx.guild.id)
+        if log_channel_id:
+            log_channel = ctx.guild.get_channel(log_channel_id)
+            if log_channel:
+                await ctx.send(f"The message has been logged in {log_channel.mention}.")
+            else:
+                await ctx.send("Log channel not found.")
+        else:
+            await ctx.send("Log channel not set.")
+    # log_message command ^
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

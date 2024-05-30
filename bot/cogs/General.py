@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
-import asyncio
 import os
-from dotenv import load_dotenv
 from discord.commands import Option
 
 bot = discord.Bot()
@@ -51,9 +49,10 @@ class General(commands.Cog):
                 description="Here is a list of available commands:",
                 color=general_color
             )
+            embed.add_field(name="Important", value="`.` are prefix commands, `/` are app commands, `[]` are message commands (message commands are accessed by right clicking a message -> apps)", inline=False)
             embed.add_field(name="General", value="`/help` | `/link`", inline=False)
-            embed.add_field(name="Moderation", value=f"`{prefix}clear`", inline=False)
-            embed.add_field(name="Info", value=f"`/userinfo` | `{prefix}ping`", inline=False)
+            embed.add_field(name="Moderation", value=f"`{prefix}clear` | `/log_channel` | `[]Log Message`", inline=False)
+            embed.add_field(name="Info", value=f"`/userinfo` | `/serverinfo` | `{prefix}ping`", inline=False)
             embed.set_footer(text="Use `/help <command>` to get detailed information about a specific command.")
         await ctx.respond(embed=embed)
     # help command ^

@@ -70,6 +70,22 @@ class Client(commands.Bot):
     # print info message to console on boot and set custom activity ^
     
 bot = Client()
+# define bot ^
+
+bot.remove_command('help')
+# Remove the default help command ^
+
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(
+        title="🦜 Aye, i see ya matey!",
+        description="I see you need help, but this isn't the way. Type `/help` and see the magic...",
+        color=discord.Color.from_rgb(117,201,177),
+        timestamp=ctx.message.created_at,
+    )
+    embed.set_footer(text="Parry | Errors")
+    await ctx.send(embed=embed, delete_after=20)
+# help command ^
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -82,7 +98,7 @@ async def on_command_error(ctx, error):
         )
         embed.add_field(name="Try" , value="`/help` to get a list of available commands")
         embed.set_footer(text="Parry | Errors")
-        await ctx.send(embed=embed, delete_after=15)
+        await ctx.send(embed=embed, delete_after=20)
     
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
@@ -93,7 +109,7 @@ async def on_command_error(ctx, error):
         )
         embed.add_field(name="Try" , value="Contact staff or an administrator")
         embed.set_footer(text="Parry | Errors")
-        await ctx.send(embed=embed, delete_after=15)
+        await ctx.send(embed=embed, delete_after=20)
     
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
@@ -104,7 +120,7 @@ async def on_command_error(ctx, error):
         )
         embed.add_field(name="Try" , value="Check the command syntax and try again")
         embed.set_footer(text="Parry | Errors")
-        await ctx.send(embed=embed, delete_after=15)
+        await ctx.send(embed=embed, delete_after=20)
     
     elif isinstance(error, commands.CommandOnCooldown):
         embed = discord.Embed(
@@ -115,7 +131,7 @@ async def on_command_error(ctx, error):
         )
         embed.add_field(name="Try" , value="Wait for the cooldown to expire")
         embed.set_footer(text="Parry | Errors")
-        await ctx.send(embed=embed, delete_after=15)
+        await ctx.send(embed=embed, delete_after=20)
 # Error handling ^
 
 bot.run(token)

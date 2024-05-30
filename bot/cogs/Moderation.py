@@ -32,8 +32,9 @@ class Moderation(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, amount: Union[int, str]):
         if amount == "all":
-            await ctx.channel.purge()
-            embed = discord.Embed(title="🧹 Clear", description="All messages cleared!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+            amount = 400
+            await ctx.channel.purge(limit=amount+1)
+            embed = discord.Embed(title="🧹 Clear", description="All messages cleared! (Limit=400)", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
             embed.add_field(name="Moderator", value=ctx.author.mention)
             embed.add_field(name="Channel", value=ctx.channel.mention)
             embed.add_field(name="" , value="####", inline=False)
@@ -110,23 +111,15 @@ class Moderation(commands.Cog):
         if log_channel_id:
             log_channel = ctx.guild.get_channel(log_channel_id)
             if log_channel:
-                await log_channel.send(embed=embed)
+                await log_channel.send(embed=embed)  # Send the embed to the log channel
+                embed = discord.Embed(title="📜 Message Logged", description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!\nThis message will be deleted shortly.", color=discord.Color.brand_red())
+                await ctx.respond(embed=embed, ephemeral=True, delete_after=8)
             else:
-                await ctx.send("Log channel not found.")
+                embed = discord.Embed(title="⚠️ Error", description="Log channel not found. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", color=discord.Color.orange())
+                await ctx.respond(embed=embed, ephemeral=True, delete_after=14)
         else:
-            await ctx.send("Log channel not set.")
-
-        embed2 = discord.Embed(title="Message Logged", description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!", color=discord.Color.brand_red())
-        await ctx.respond(embed=embed2, ephemeral=True, delete_after=8)
-        log_channel_id = log_channels.get(ctx.guild.id)
-        if log_channel_id:
-            log_channel = ctx.guild.get_channel(log_channel_id)
-            if log_channel:
-                await ctx.send(f"The message has been logged in {log_channel.mention}.")
-            else:
-                await ctx.send("Log channel not found.")
-        else:
-            await ctx.send("Log channel not set.")
+            embed = discord.Embed(title="⚠️ Error", description="Log channel not set. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", color=discord.Color.orange())
+            await ctx.respond(embed=embed, ephemeral=True, delete_after=14)
     # log_message command ^
 
 def setup(bot):

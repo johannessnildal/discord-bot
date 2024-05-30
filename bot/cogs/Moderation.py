@@ -3,6 +3,7 @@ from discord.ext import commands
 import asyncio
 from discord.ui import View
 from typing import Union
+from datetime import datetime
 
 bot = discord.Bot()
 
@@ -37,7 +38,7 @@ class Moderation(commands.Cog):
             await ctx.channel.purge(limit=amount+1)
             embed = discord.Embed(
                 title="🧹 Clear", 
-                description="All messages cleared! Limit is 400", 
+                description="I cleared as many messages as i could boss! I'm tired now...", 
                 color=discord.Color.brand_red(), 
                 timestamp=ctx.message.created_at
                 )
@@ -140,18 +141,17 @@ class Moderation(commands.Cog):
         log_channels[ctx.guild.id] = channel.id
         embed = discord.Embed(
             title="📜 Log Channel", 
-            description=f"Log channel set to {channel.mention}.\nThis message will be deleted shortly.", 
+            description=f"Log channel set to {channel.mention}.", 
             color=discord.Color.brand_red(), 
-            timestamp=ctx.message.created_at
         )
-        embed.set_footer(text=cogname)
-        await ctx.respond(embed=embed, delete_after=10)
+        embed.set_footer(text=cogname + " - " + datetime.now().strftime("%d-%m-%y %H:%M"))
+        await ctx.respond(embed=embed)
     # set_log_channel command ^
 
     @commands.message_command(name="Log Message")
     @commands.has_permissions(administrator=True)
     async def log_message(self, ctx: commands.Context, message: discord.Message):
-        embed = discord.Embed(title="👀 Logged Message", description=message.content, color=discord.Color.blue())
+        embed = discord.Embed(title="📜 Logged Message", description=message.content, color=discord.Color.blue())
         embed.set_author(name=message.author.display_name, icon_url=message.author.avatar.url)
         embed.timestamp = message.created_at
         embed.add_field(name="Message ID", value=message.id)
@@ -167,20 +167,20 @@ class Moderation(commands.Cog):
                 await log_channel.send(embed=embed)  # Send the embed to the log channel
                 embed = discord.Embed(
                     title="📜 Message Logged", 
-                    description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!\nThis message will be deleted shortly.", 
+                    description=f"Message by {message.author.mention} in {message.channel.mention} has been logged!", 
                     color=discord.Color.brand_red(), 
-                    timestamp=ctx.message.created_at
                 )
-                await ctx.respond(embed=embed, ephemeral=True, delete_after=10)
+                embed.add_field(name="Jump to message", value=f"[Click here]({message.jump_url})", inline=False)
+                embed.set_footer(text=cogname + " - " + datetime.now().strftime("%d-%m-%y %H:%M"))
+                await ctx.respond(embed=embed)
             
             else:
                 embed = discord.Embed(
                     title="⚠️ Error", 
                     description="Log channel not found. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", 
                     color=discord.Color.orange(), 
-                    timestamp=ctx.message.created_at
                 )
-                embed.set_footer("Parry | Errors")
+                embed.set_footer(text="Parry | Errors")
                 await ctx.respond(embed=embed, ephemeral=True, delete_after=15)
         
         else:
@@ -188,9 +188,8 @@ class Moderation(commands.Cog):
                 title="⚠️ Error", 
                 description="Log channel not set. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", 
                 color=discord.Color.orange(), 
-                timestamp=ctx.message.created_at
             )
-            embed.set_footer("Parry | Errors")
+            embed.set_footer(text="Parry | Errors")
             await ctx.respond(embed=embed, ephemeral=True, delete_after=15)
     # log_message command ^
 

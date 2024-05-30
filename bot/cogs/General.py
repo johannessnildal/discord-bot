@@ -15,7 +15,7 @@ class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(name="help", description="Get a list of commands or details about a specific command")
+    @commands.slash_command(name="help", description="I've got your back! Get a list of commands or details about a specific command")
     async def help(self, ctx, command: Option(str, "Enter a command to get specific information", required=False)): # type: ignore
         if command:
             command = command.lower()
@@ -71,22 +71,22 @@ class General(commands.Cog):
             else:
                 embed = discord.Embed(
                     title="⚠️ Error",
-                    description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!😔\nThis message will be deleted shortly.",
+                    description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!😔",
                     color=error_color,
-                    delete_after=15,
-                    timestamp=ctx.message.created_at
                 )
                 embed.set_footer(text="Parry | Errors")
         else:
             embed = discord.Embed(
-                title="Help",
+                title="🦜 Help",
                 description="Here is a list of available commands:",
-                color=general_color
+                color=discord.Color.from_rgb(117,201,177)
             )
+            embed.set_thumbnail(url=self.bot.user.avatar.url)
             embed.add_field(name="Important", value="`.` are prefix commands, `/` are app commands, `[]` are message commands (message commands are accessed by right clicking a message -> apps)", inline=False)
             embed.add_field(name="General", value="`/help` | `/link`", inline=False)
             embed.add_field(name="Moderation", value=f"`{prefix}clear` | `/log_channel` | `[]log_message`", inline=False)
             embed.add_field(name="Info", value=f"`/userinfo` | `/serverinfo` | `{prefix}ping`", inline=False)
+            embed.add_field(name="🤐 Psst!", value="There may be some... commands... that are hidden away.", inline=False)
             embed.set_footer(text="Use `/help <command>` to get detailed information about a specific command.")
         await ctx.respond(embed=embed)
     # help command ^

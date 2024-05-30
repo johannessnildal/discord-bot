@@ -1,18 +1,48 @@
 import discord
 from discord.ext import commands
+import os
 
 bot = discord.Bot()
+prefix = os.getenv("PREFIX")
 
 cogname = "Parry | Info"
 
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.waiting_for_command = False
 
-    @commands.command()
-    async def ping(self, ctx):
-        await ctx.send(f"Pong! Latency is **{round(self.bot.latency * 1000)}ms**")
-    # ping command ^
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+
+        if self.waiting_for_command:
+            if message.content.lower() == "prefix":
+                embed = discord.Embed(
+                    title="Here ya go!",
+                    description=f"My prefix is `{prefix}`",
+                    color=discord.Color.from_rgb(117,201,177)
+                )
+                await message.channel.send(embed=embed)
+                self.waiting_for_command = False
+            elif message.content.lower() == "ping":
+                embed = discord.Embed(
+                    title="🏓 Pong!",
+                    description=f"Latency: **{round(self.bot.latency * 1000)}ms**",
+                    color=discord.Color.from_rgb(117,201,177)
+                )
+                await message.channel.send(embed=embed)
+                self.waiting_for_command = False
+
+        elif message.content.lower() == "hello parry":
+            embed = discord.Embed(
+                title="🦜 Ahoy there!",
+                color=discord.Color.from_rgb(117,201,177)
+            )
+            embed.add_field(name="Here's some stuff ya can ask me!", value="`prefix` `ping`", inline=False)
+            await message.channel.send(embed=embed)
+            self.waiting_for_command = True
 
     @commands.slash_command(title="Userinfo", description="Get information about a user")
     async def userinfo(self, ctx, user: discord.Member):

@@ -14,7 +14,7 @@ class EasterEggs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user:
+        if message.author.bot:
             return
 
         if "hello there" in message.content.lower():

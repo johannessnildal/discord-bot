@@ -32,7 +32,6 @@ class Client(commands.Bot):
         print(Fore.WHITE + "---------- WELCOME ----------")
         print(Fore.WHITE + "It's great to see you again. Sincerely, " + Fore.RED + bot.user.name + Fore.WHITE + "!")
 
-
         print("")
         print(Fore.WHITE + "---------- CONFIG ----------")
         if token is None:
@@ -54,8 +53,6 @@ class Client(commands.Bot):
         print(prfx + " Connected to " + Fore.RED + str(len(bot.guilds)) + " servers")
         print(prfx + " Latency is " + Fore.RED + str(round(self.latency, 2)) + "s")
         
-        await bot.change_presence(activity = discord.Activity(name="/help", type=3))
-        
         print("")
         if len(self.cogslist) > 0:
             print(Fore.WHITE + "---------- COGS ----------")
@@ -67,7 +64,20 @@ class Client(commands.Bot):
         print("")
         print(Fore.WHITE + "---------- BOOT ----------")
         print(prfx + Fore.GREEN + " Successfully booted up!" + Style.RESET_ALL)
-    # print info message to console on boot and set custom activity ^
+    # print info message to console on boot ^
+
+        await bot.change_presence(activity = discord.Activity(name="/help", type=3))
+        # set custom activity ^
+
+async def on_message(self, message):
+    if message.author == bot.user:
+        return
+    
+    if not message.content.startswith(prefix):
+        return
+    
+    await bot.process_commands(message)
+# process commands ^
     
 bot = Client()
 # define bot ^
@@ -130,6 +140,49 @@ async def on_command_error(ctx, error):
             timestamp=ctx.message.created_at
         )
         embed.add_field(name="Try" , value="Wait for the cooldown to expire")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed, delete_after=20)
+
+@bot.event
+async def on_slash_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        embed = discord.Embed(
+            title="⏳ Error", 
+            description="This command is on cooldown, please try again later.\nThis message will be deleted shortly.", 
+            color=discord.Color.orange(), 
+            timestamp=ctx.message.created_at
+        )
+        embed.add_field(name="Try" , value="Wait for the cooldown to expire")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed, delete_after=20)
+    elif isinstance(error, commands.MissingPermissions):
+        embed = discord.Embed(
+            title="⛔️ Error", 
+            description="You do not have the required permissions to use this command.\nThis message will be deleted shortly.", 
+            color=discord.Color.red(), 
+            timestamp=ctx.message.created_at
+        )
+        embed.add_field(name="Try" , value="Contact staff or an administrator")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed, delete_after=20)
+    elif isinstance(error, commands.MissingRequiredArgument):
+        embed = discord.Embed(
+            title="⚠️ Error", 
+            description="You are missing required arguments.\nThis message will be deleted shortly.", 
+            color=discord.Color.orange(), 
+            timestamp=ctx.message.created_at
+        )
+        embed.add_field(name="Try" , value="Check the command syntax and try again")
+        embed.set_footer(text="Parry | Errors")
+        await ctx.send(embed=embed, delete_after=20)
+    else:
+        embed = discord.Embed(
+            title="⚠️ Error", 
+            description="An error occurred while executing this command.\nThis message will be deleted shortly.", 
+            color=discord.Color.red(), 
+            timestamp=ctx.message.created_at
+        )
+        embed.add_field(name="Try" , value="Contact staff or an administrator")
         embed.set_footer(text="Parry | Errors")
         await ctx.send(embed=embed, delete_after=20)
 # Error handling ^

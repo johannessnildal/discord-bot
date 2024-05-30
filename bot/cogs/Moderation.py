@@ -37,7 +37,7 @@ class Moderation(commands.Cog):
             amount = 400
             await ctx.channel.purge(limit=amount+1)
             embed = discord.Embed(
-                title="🧹 Clear", 
+                title="🗑️ Clear", 
                 description="I cleared as many messages as i could boss! I'm tired now...", 
                 color=discord.Color.brand_red(), 
                 timestamp=ctx.message.created_at
@@ -99,7 +99,7 @@ class Moderation(commands.Cog):
                 
                 await ctx.channel.purge(limit=amount+1)
                 embed = discord.Embed(
-                    title="🧹 Clear", 
+                    title="🗑️ Clear", 
                     description=f"Deleted **{amount}** messages!", 
                     color=discord.Color.brand_red(), 
                     timestamp=ctx.message.created_at

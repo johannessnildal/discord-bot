@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from discord.ui import Button, View
+from typing import Union
 
 bot = discord.Bot()
 
@@ -27,36 +28,57 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def clear(self, ctx, amount: int,):
-        if amount > 100:
-            await ctx.send("You can't delete more than 100 messages at once!")
-            return
-        elif amount < 1:
-            await ctx.send("You have to delete at least one message!")
-            return
-        await ctx.channel.purge(limit=amount+1)
-        embed = discord.Embed(title="Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
-        embed.add_field(name="Moderator", value=ctx.author.mention)
-        embed.add_field(name="Channel", value=ctx.channel.mention)
-        embed.add_field(name="" , value="####", inline=False)
-        embed.set_footer(text=cogname)
-                
-        view = DeleteToggleView()
-        clearmsg = await ctx.send(embed=embed, view=view)
-            
-        for i in range(20, 0, -1):
-            if not view.delete_toggle:
-                # Remove the countdown field
-                embed.set_field_at(2, name="Self-Delete disabled", value="", inline=False)
+    async def clear(self, ctx, amount: Union[int, str]):
+        if amount == "all":
+            await ctx.channel.purge()
+            embed = discord.Embed(title="Clear", description="All messages cleared!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+            embed.add_field(name="Moderator", value=ctx.author.mention)
+            embed.add_field(name="Channel", value=ctx.channel.mention)
+            embed.add_field(name="" , value="####", inline=False)
+            embed.set_footer(text=cogname)
+            view = DeleteToggleView()
+            clearmsg = await ctx.send(embed=embed, view=view)
+            for i in range(20, 0, -1):
+                if not view.delete_toggle:
+                    # Remove the countdown field
+                    embed.set_field_at(2, name="Self-Delete disabled", value="", inline=False)
+                    await clearmsg.edit(embed=embed)
+                    break
+                embed.set_field_at(2, name="Self-Delete", value=f"This message will delete itself in {i}s", inline=False)
                 await clearmsg.edit(embed=embed)
-                break
-            embed.set_field_at(2, name="Self-Delete", value=f"This message will delete itself in {i}s", inline=False)
-            await clearmsg.edit(embed=embed)
-            await asyncio.sleep(1)
-                
-        if view.delete_toggle:
-            await clearmsg.delete()
-# clear command ^
+                await asyncio.sleep(1)
+            if view.delete_toggle:
+                await clearmsg.delete()
+        else:
+            try:
+                amount = int(amount)
+                if amount > 100:
+                    await ctx.send("You can't delete more than 100 messages at once!")
+                    return
+                elif amount < 1:
+                    await ctx.send("You have to delete at least one message!")
+                    return
+                await ctx.channel.purge(limit=amount+1)
+                embed = discord.Embed(title="Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+                embed.add_field(name="Moderator", value=ctx.author.mention)
+                embed.add_field(name="Channel", value=ctx.channel.mention)
+                embed.add_field(name="" , value="####", inline=False)
+                embed.set_footer(text=cogname)
+                view = DeleteToggleView()
+                clearmsg = await ctx.send(embed=embed, view=view)
+                for i in range(20, 0, -1):
+                    if not view.delete_toggle:
+                        # Remove the countdown field
+                        embed.set_field_at(2, name="Self-Delete disabled", value="", inline=False)
+                        await clearmsg.edit(embed=embed)
+                        break
+                    embed.set_field_at(2, name="Self-Delete", value=f"This message will delete itself in {i}s", inline=False)
+                    await clearmsg.edit(embed=embed)
+                    await asyncio.sleep(1)
+                if view.delete_toggle:
+                    await clearmsg.delete()
+            except ValueError:
+                await ctx.send("Invalid amount parameter. Please provide a number or 'all'.")
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

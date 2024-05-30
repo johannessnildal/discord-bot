@@ -93,7 +93,12 @@ class General(commands.Cog):
 
     @commands.slash_command(title="Invite", description="Get a link to invite Parry to your server.")
     async def invite(self, ctx):
-        embed = discord.Embed(title="Invite", description="Ayee! Here's an invite for me:", color=discord.Color.blue(), timestamp=discord.utils.utcnow())
+        embed = discord.Embed(
+            title="Invite", 
+            description="Ayee! Here's an invite for me:", 
+            color=discord.Color.blue(), 
+            timestamp=discord.utils.utcnow()
+        )
         embed.add_field(name="", value="[Copy or click here!](https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands)")
         embed.set_footer(text="Parry | Invite")
         await ctx.respond(embed=embed)

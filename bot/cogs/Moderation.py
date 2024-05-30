@@ -31,16 +31,23 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, amount: Union[int, str]):
+        
         if amount == "all":
             amount = 400
             await ctx.channel.purge(limit=amount+1)
-            embed = discord.Embed(title="🧹 Clear", description="All messages cleared! Limit is 400", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+            embed = discord.Embed(
+                title="🧹 Clear", 
+                description="All messages cleared! Limit is 400", 
+                color=discord.Color.brand_red(), 
+                timestamp=ctx.message.created_at
+                )
             embed.add_field(name="Moderator", value=ctx.author.mention)
             embed.add_field(name="Channel", value=ctx.channel.mention)
             embed.add_field(name="" , value="####", inline=False)
             embed.set_footer(text=cogname)
             view = DeleteToggleView()
             clearmsg = await ctx.send(embed=embed, view=view)
+            
             for i in range(20, 0, -1):
                 if not view.delete_toggle:
                     # Remove the countdown field
@@ -52,26 +59,50 @@ class Moderation(commands.Cog):
                 await asyncio.sleep(1)
             if view.delete_toggle:
                 await clearmsg.delete()
+        
         else:
             try:
                 amount = int(amount)
                 if amount > 400:
-                    embed = discord.Embed(title="⚠️ Error", description="You can't delete more than 400 messages at once!\nThis message will be deleted shortly.", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+                    embed = discord.Embed(
+                        title="⚠️ Error", 
+                        description="You can't delete more than 400 messages at once!\nThis message will be deleted shortly.", 
+                        color=discord.Color.orange(), 
+                        timestamp=ctx.message.created_at
+                    )
                     embed.set_footer(text="Parry | Errors")
                     await ctx.send(embed=embed, delete_after=15)
                     return
+                
                 elif amount == 0:
-                    embed = discord.Embed(title="⚠️ Error", description="You have to delete at least one message!\nThis message will be deleted shortly.", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+                    embed = discord.Embed(
+                        title="⚠️ Error", 
+                        description="You have to delete at least one message!\nThis message will be deleted shortly.", 
+                        color=discord.Color.orange(), 
+                        timestamp=ctx.message.created_at
+                    )
                     embed.set_footer(text="Parry | Errors")
                     await ctx.send(embed=embed, delete_after=15)
                     return
+                
                 elif amount < 0:
-                    embed = discord.Embed(title="⚠️ Error", description="You can't delete a negative amount of messages!\nThis message will be deleted shortly.", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+                    embed = discord.Embed(
+                        title="⚠️ Error", 
+                        description="You can't delete a negative amount of messages!\nThis message will be deleted shortly.", 
+                        color=discord.Color.orange(), 
+                        timestamp=ctx.message.created_at
+                    )
                     embed.set_footer(text="Parry | Errors")
                     await ctx.send(embed=embed, delete_after=15)
                     return
+                
                 await ctx.channel.purge(limit=amount+1)
-                embed = discord.Embed(title="🧹 Clear", description=f"Deleted **{amount}** messages!", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+                embed = discord.Embed(
+                    title="🧹 Clear", 
+                    description=f"Deleted **{amount}** messages!", 
+                    color=discord.Color.brand_red(), 
+                    timestamp=ctx.message.created_at
+                )
                 embed.add_field(name="Moderator", value=ctx.author.mention)
                 embed.add_field(name="Channel", value=ctx.channel.mention)
                 embed.add_field(name="" , value="####", inline=False)
@@ -87,10 +118,17 @@ class Moderation(commands.Cog):
                     embed.set_field_at(2, name="Self-Delete", value=f"This message will delete itself in {i}s", inline=False)
                     await clearmsg.edit(embed=embed)
                     await asyncio.sleep(1)
+                
                 if view.delete_toggle:
                     await clearmsg.delete()
             except ValueError:
-                embed = discord.Embed(title="⚠️ Error", description="Invalid amount parameter. Please provide a number or 'all'.\nThis message will be deleted shortly.", color=discord.Color.orange(), ephemeral=True, timestamp=ctx.message.created_at)
+                embed = discord.Embed(
+                    title="⚠️ Error", 
+                    description="Invalid amount parameter. Please provide a number or 'all'.\nThis message will be deleted shortly.", 
+                    color=discord.Color.orange(), 
+                    ephemeral=True, 
+                    timestamp=ctx.message.created_at
+                )
                 embed.add_field(name="Examples", value=f"`{ctx.prefix}clear 5`\n`{ctx.prefix}clear all`")
                 embed.set_footer("Parry | Errors")
                 await ctx.send(embed=embed, delete_after=15)
@@ -100,7 +138,12 @@ class Moderation(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def set_log_channel(self, ctx, channel: discord.TextChannel):
         log_channels[ctx.guild.id] = channel.id
-        embed = discord.Embed(title="📜 Log Channel", description=f"Log channel set to {channel.mention}.\nThis message will be deleted shortly.", color=discord.Color.brand_red(), timestamp=ctx.message.created_at)
+        embed = discord.Embed(
+            title="📜 Log Channel", 
+            description=f"Log channel set to {channel.mention}.\nThis message will be deleted shortly.", 
+            color=discord.Color.brand_red(), 
+            timestamp=ctx.message.created_at
+        )
         embed.set_footer(text=cogname)
         await ctx.respond(embed=embed, delete_after=10)
     # set_log_channel command ^
@@ -119,16 +162,34 @@ class Moderation(commands.Cog):
         log_channel_id = log_channels.get(ctx.guild.id)
         if log_channel_id:
             log_channel = ctx.guild.get_channel(log_channel_id)
+            
             if log_channel:
                 await log_channel.send(embed=embed)  # Send the embed to the log channel
-                embed = discord.Embed(title="📜 Message Logged", description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!\nThis message will be deleted shortly.", color=discord.Color.brand_red())
+                embed = discord.Embed(
+                    title="📜 Message Logged", 
+                    description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!\nThis message will be deleted shortly.", 
+                    color=discord.Color.brand_red(), 
+                    timestamp=ctx.message.created_at
+                )
                 await ctx.respond(embed=embed, ephemeral=True, delete_after=10)
+            
             else:
-                embed = discord.Embed(title="⚠️ Error", description="Log channel not found. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", color=discord.Color.orange())
+                embed = discord.Embed(
+                    title="⚠️ Error", 
+                    description="Log channel not found. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", 
+                    color=discord.Color.orange(), 
+                    timestamp=ctx.message.created_at
+                )
                 embed.set_footer("Parry | Errors")
                 await ctx.respond(embed=embed, ephemeral=True, delete_after=15)
+        
         else:
-            embed = discord.Embed(title="⚠️ Error", description="Log channel not set. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+            embed = discord.Embed(
+                title="⚠️ Error", 
+                description="Log channel not set. Please set a log channel using `/log_channel`.\nThis message will be deleted shortly.", 
+                color=discord.Color.orange(), 
+                timestamp=ctx.message.created_at
+            )
             embed.set_footer("Parry | Errors")
             await ctx.respond(embed=embed, ephemeral=True, delete_after=15)
     # log_message command ^
@@ -136,4 +197,3 @@ class Moderation(commands.Cog):
 def setup(bot):
     bot.add_cog(Moderation(bot))
 # This is a cog that adds moderation commands to the bot.
-

@@ -16,7 +16,7 @@ class Info(commands.Cog):
 
     @commands.slash_command(title="Userinfo", description="Get information about a user")
     async def userinfo(self, ctx, user: discord.Member):
-        embed = discord.Embed(title="Userinfo", description=f"Here is some juicy gossip about {user} 😄", color=discord.Color.green(), timestamp=discord.utils.utcnow())
+        embed = discord.Embed(title="User info", description=f"Here is some juicy gossip about {user} 😄", color=discord.Color.green(), timestamp=discord.utils.utcnow())
         embed.set_thumbnail(url=user.avatar)
         embed.add_field(name="Name", value=f"Username: {user.name} | Display: {user.display_name}", inline=False)
         embed.add_field(name="ID", value=user.id, inline=False)
@@ -36,7 +36,7 @@ class Info(commands.Cog):
     @commands.has_guild_permissions(manage_guild=True)
     async def serverinfo(self, ctx):
         guild = ctx.guild
-        embed = discord.Embed(title="Serverinfo", description=f"Here is some juicy gossip about {guild} 🦜", color=discord.Color.green(), timestamp=discord.utils.utcnow())
+        embed = discord.Embed(title="Server info", description=f"Here is some juicy gossip about {guild} 🦜", color=discord.Color.green(), timestamp=discord.utils.utcnow())
         embed.set_thumbnail(url=guild.icon)
         embed.add_field(name="Name", value=guild.name, inline=False)
         embed.add_field(name="ID", value=guild.id, inline=False)

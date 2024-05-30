@@ -78,8 +78,26 @@ class Moderation(commands.Cog):
                 if view.delete_toggle:
                     await clearmsg.delete()
             except ValueError:
-                await ctx.send("Invalid amount parameter. Please provide a number or 'all'.")
+                embed = discord.Embed(title="⚠️ Error", description="Invalid amount parameter. Please provide a number or 'all'.", color=discord.Color.orange())
+                embed.add_field(name="Examples", value=f"`{ctx.prefix}clear 5`\n`{ctx.prefix}clear all`")
+                embed.set_footer(text=cogname)
+                await ctx.send(embed=embed)
     # clear command ^
+
+    @commands.message_command(name="Log Message")
+    @commands.has_permissions(administrator=True)
+    async def log_message(self, ctx: commands.Context, message: discord.Message):
+        embed = discord.Embed(title="👀 Logged Message", description=message.content, color=discord.Color.blue())
+        embed.set_author(name=message.author.display_name, icon_url=message.author.avatar.url)
+        embed.timestamp = message.created_at
+        embed.add_field(name="Message ID", value=message.id)
+        embed.add_field(name="Channel", value=message.channel.mention)
+        embed.add_field(name="Jump to message", value=f"[Click here]({message.jump_url})", inline=False)
+        embed.set_footer(text=f"Logged by {ctx.author.display_name}")
+        await ctx.send(embed=embed)
+
+        embed2 = discord.Embed(title="Message Logged", description=f"Message by {message.author.display_name} in {message.channel.mention} has been logged!", color=discord.Color.brand_red())
+        await ctx.respond(embed=embed2, ephemeral=True, delete_after=4) 
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

@@ -30,7 +30,7 @@ class General(commands.Cog):
             elif command == "clear":
                 embed = discord.Embed(
                     title=f"{prefix}clear | moderation",
-                    description=f"Usage: `{prefix}clear all` or `{prefix}clear <amount>`\nDelete a specified amount of messages in the current channel. oooh, spooky!",
+                    description=f"Usage: `{prefix}clear all`\n`{prefix}clear <amount>`\nDelete a specified amount of messages in the current channel. oooh, spooky!",
                     color=moderation_color
                 )
             elif command == "link":
@@ -42,7 +42,7 @@ class General(commands.Cog):
             else:
                 embed = discord.Embed(
                     title="⚠️ Error",
-                    description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!",
+                    description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!😔",
                     color=error_color
                 )
         else:

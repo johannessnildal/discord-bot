@@ -73,7 +73,7 @@ class General(commands.Cog):
                     title="⚠️ Error",
                     description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!😔\nThis message will be deleted shortly.",
                     color=error_color,
-                    delete_after=14,
+                    delete_after=15,
                     timestamp=ctx.message.created_at
                 )
                 embed.set_footer(text="Parry | Errors")

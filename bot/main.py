@@ -74,13 +74,13 @@ bot = Client()
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        embed = discord.Embed(title="⚠️ Error", description="The bot encountered an error, or the command does not exist", color=discord.Color.orange(), timestamp=ctx.message.created_at)
+        embed = discord.Embed(title="⚠️ Error", description="The command entered does not exist", color=discord.Color.orange(), timestamp=ctx.message.created_at)
         embed.add_field(name="Try" , value="`/help` | `/ping`")
         embed.set_footer(text="Parry | Errors")
         await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(title="⛔️ Error", description="You do not have the required permissions to use this command", color=discord.Color.red(), timestamp=ctx.message.created_at)
-        embed.add_field(name="Try" , value="Contacting a server staff or administrator")
+        embed.add_field(name="Try" , value="Contact staff or an administrator")
         embed.set_footer(text="Parry | Errors")
         await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):

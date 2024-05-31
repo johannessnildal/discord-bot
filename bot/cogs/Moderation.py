@@ -167,7 +167,7 @@ class Moderation(commands.Cog):
                 await log_channel.send(embed=embed)  # Send the embed to the log channel
                 embed = discord.Embed(
                     title="📜 Message Logged", 
-                    description=f"Message by {message.author.mention} in {message.channel.mention} has been logged!", 
+                    description=f"Message by {message.author.mention} has been logged!", 
                     color=discord.Color.brand_red(), 
                 )
                 embed.add_field(name="Jump to message", value=f"[Click here]({message.jump_url})", inline=False)

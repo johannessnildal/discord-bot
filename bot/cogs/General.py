@@ -61,18 +61,11 @@ class General(commands.Cog):
                     color=info_color
                 )
                 embed.add_field(name="Usage", value=f"`{prefix}ping`", inline=False)
-            elif command == "link":
-                embed = discord.Embed(
-                    title="/link | general",
-                    description="Get a link to invite me to your server! Who wouldn't want a screeching parrot in their server?",
-                    color=general_color
-                )
-                embed.add_field(name="Usage", value="`/link`", inline=False)
             else:
                 embed = discord.Embed(
                     title="⚠️ Error",
                     description=f"Sorry matey! One of two things happened: Either there is no command named `{command}`, or i've just been too lazy to add further information regarding `{command}`. I'm a parrot, give me a break!😔",
-                    color=error_color,
+                    color=error_color
                 )
                 embed.set_footer(text="Parry | Errors")
         else:
@@ -91,19 +84,6 @@ class General(commands.Cog):
             embed.set_footer(text="Use `/help <command>` to get detailed information about a specific command.")
         await ctx.respond(embed=embed)
     # help command ^
-
-    @commands.slash_command(title="Invite", description="Get a link to invite Parry to your server.")
-    async def invite(self, ctx):
-        embed = discord.Embed(
-            title="Invite", 
-            description="Ayee! Here's an invite for me:", 
-            color=discord.Color.blue(), 
-            timestamp=discord.utils.utcnow()
-        )
-        embed.add_field(name="", value="[Copy or click here!](https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=bot%20applications.commands)")
-        embed.set_footer(text="Parry | Invite")
-        await ctx.respond(embed=embed)
-    # invite command ^
 
 def setup(bot):
     bot.add_cog(General(bot))

@@ -51,7 +51,7 @@ class Client(commands.Bot):
         print("")
         print(Fore.WHITE + "---------- STATS ----------")
         print(prfx + " Connected to " + Fore.RED + str(len(bot.guilds)) + " servers")
-        print(prfx + " Latency is " + Fore.RED + str(round(self.latency, 2)) + "s")
+        print(prfx + " Latency is " + Fore.RED + str(round(self.latency, 2)*1000) + "ms")
         
         print("")
         if len(self.cogslist) > 0:

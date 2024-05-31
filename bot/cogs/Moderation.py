@@ -170,7 +170,7 @@ class Moderation(commands.Cog):
                     description=f"Message by {message.author.mention} has been logged!", 
                     color=discord.Color.brand_red(), 
                 )
-                embed.add_field(name="Jump to message", value=f"[Click here]({message.jump_url})", inline=False)
+                embed.add_field(name="Jump to log", value=f"[Click here]({log_channel.jump_url})", inline=False)
                 embed.set_footer(text=cogname + " - " + datetime.now().strftime("%d-%m-%y %H:%M"))
                 await ctx.respond(embed=embed)
             

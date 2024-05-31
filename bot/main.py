@@ -95,7 +95,24 @@ async def help(ctx):
     )
     embed.set_footer(text="Parry | Errors")
     await ctx.send(embed=embed, delete_after=20)
-# help command ^
+# add new help command ^
+
+@bot.event
+async def on_guild_join(guild):
+    welcome_message = discord.Embed(
+        title="🦜 It's great seeing ya matey!",
+        description="Type `/help` and i'll get you started! If you want to log my important stuff, type `/log_channel`!",
+        color=discord.Color.from_rgb(117,201,177),
+        timestamp=guild.created_at,
+    )
+    welcome_message.set_footer(text="Parry The Parrot")
+    
+    # Try to find a text channel to send the welcome message
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            await channel.send(welcome_message)
+            break
+# send welcome message on join ^
 
 @bot.event
 async def on_command_error(ctx, error):

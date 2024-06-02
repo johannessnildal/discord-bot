@@ -54,13 +54,6 @@ class General(commands.Cog):
                     description="Log a message to the moderation log. This command is accessed by right clicking a message and selecting 'Apps'.",
                     color=moderation_color
                 )
-            elif command == "ping":
-                embed = discord.Embed(
-                    title=f"{prefix}ping | info",
-                    description="Get the latency of the bot in milliseconds.",
-                    color=info_color
-                )
-                embed.add_field(name="Usage", value=f"`{prefix}ping`", inline=False)
             else:
                 embed = discord.Embed(
                     title="⚠️ Error",

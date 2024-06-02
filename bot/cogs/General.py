@@ -79,7 +79,7 @@ class General(commands.Cog):
             embed.add_field(name="General", value="`/help` `/link`", inline=False)
             embed.add_field(name="Further help", value="By saying 'hello parry' in chat (without prefix), you unlock a set of helpful info you can ask for. Like:\n`prefix` `ping` `link`", inline=False)
             embed.add_field(name="Moderation", value=f"`{prefix}clear` `/log_channel` `[]log_message`", inline=False)
-            embed.add_field(name="Info", value=f"`/userinfo` `/serverinfo` `{prefix}ping`", inline=False)
+            embed.add_field(name="Info", value=f"`/userinfo` `/serverinfo`", inline=False)
             embed.add_field(name="🤐 Psst!", value="Parry is a bird of many secrets. Find out if you can!", inline=False)
             embed.set_footer(text="Use `/help <command>` to get detailed information about a specific command.")
         await ctx.respond(embed=embed)

@@ -18,7 +18,8 @@ class Admin(commands.Cog):
         name="lock",
         description="Lock a specified channel"
     )
-    async def lock_channel(self, ctx, channel: discord.Option(discord.TextChannel, "Select a channel to lock")): # type: ignore
+    @commands.has_permissions(manage_channels=True, manage_guild=True, administrator=True)
+    async def lock(self, ctx, channel: discord.Option(discord.TextChannel, "Select a channel to lock")): # type: ignore
         guild = ctx.guild
         overwrite = discord.PermissionOverwrite(send_messages=False)
         
@@ -59,13 +60,27 @@ class Admin(commands.Cog):
         notification_embed.add_field(name="Locked by", value=ctx.author.mention, inline=False)
         notification_embed.set_footer(text=cogname)
         await channel.send(embed=notification_embed)
+
+    @lock.error
+    async def log_message_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = discord.Embed(
+                title="⛔️ Error", 
+                description="You do not have the required permissions to use this command.\nThis message will be deleted shortly.", 
+                color=discord.Color.red(), 
+                timestamp=datetime.now()
+            )
+            embed.add_field(name="Try" , value="Contact staff or an administrator")
+            embed.set_footer(text="Parry | Errors")
+            await ctx.respond(embed=embed, delete_after=20, ephemeral=True)
     # lock command ^
 
     @commands.slash_command(
         name="unlock",
         description="Unlock a specified channel"
     )
-    async def unlock_channel(self, ctx, channel: discord.Option(discord.TextChannel, "Select a channel to unlock")): # type: ignore
+    @commands.has_permissions(manage_channels=True, manage_guild=True, administrator=True)
+    async def unlock(self, ctx, channel: discord.Option(discord.TextChannel, "Select a channel to unlock")): # type: ignore
         guild = ctx.guild
         overwrite = discord.PermissionOverwrite(send_messages=None)
 
@@ -106,6 +121,19 @@ class Admin(commands.Cog):
         notification_embed.add_field(name="Unlocked by", value=ctx.author.mention, inline=False)
         notification_embed.set_footer(text=cogname)
         await channel.send(embed=notification_embed)
+    
+    @unlock.error
+    async def log_message_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = discord.Embed(
+                title="⛔️ Error", 
+                description="You do not have the required permissions to use this command.\nThis message will be deleted shortly.", 
+                color=discord.Color.red(), 
+                timestamp=datetime.now()
+            )
+            embed.add_field(name="Try" , value="Contact staff or an administrator")
+            embed.set_footer(text="Parry | Errors")
+            await ctx.respond(embed=embed, delete_after=20, ephemeral=True)
     # unlock command ^
 
 def setup(bot):

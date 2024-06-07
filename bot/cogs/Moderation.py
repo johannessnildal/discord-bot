@@ -100,7 +100,7 @@ class Moderation(commands.Cog):
                 await ctx.channel.purge(limit=amount+1)
                 embed = discord.Embed(
                     title="🗑️ Clear", 
-                    description=f"Deleted **{amount}** messages!", 
+                    description=f"Deleted **{amount}** message(s)!", 
                     color=discord.Color.brand_red(), 
                     timestamp=ctx.message.created_at
                 )
@@ -113,7 +113,7 @@ class Moderation(commands.Cog):
                 for i in range(20, 0, -1):
                     if not view.delete_toggle:
                         # Remove the countdown field
-                        embed.set_field_at(2, name="Self-Delete disabled", value="", inline=False)
+                        embed.remove_field(2)
                         await clearmsg.edit(embed=embed)
                         break
                     embed.set_field_at(2, name="Self-Delete", value=f"This message will delete itself in {i}s", inline=False)
@@ -146,6 +146,19 @@ class Moderation(commands.Cog):
         )
         embed.set_footer(text=cogname + " - " + datetime.now().strftime("%d-%m-%y %H:%M"))
         await ctx.respond(embed=embed)
+
+    @set_log_channel.error
+    async def set_log_channel_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = discord.Embed(
+                title="⛔️ Error", 
+                description="You do not have the required permissions to use this command.\nThis message will be deleted shortly.", 
+                color=discord.Color.red(), 
+                timestamp=datetime.now()
+            )
+            embed.add_field(name="Try" , value="Contact staff or an administrator")
+            embed.set_footer(text="Parry | Errors")
+            await ctx.respond(embed=embed, delete_after=20, ephemeral=True)
     # set_log_channel command ^
 
     @commands.message_command(name="Log Message")
@@ -191,6 +204,19 @@ class Moderation(commands.Cog):
             )
             embed.set_footer(text="Parry | Errors")
             await ctx.respond(embed=embed, ephemeral=True, delete_after=15)
+    
+    @log_message.error
+    async def log_message_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = discord.Embed(
+                title="⛔️ Error", 
+                description="You do not have the required permissions to use this command.\nThis message will be deleted shortly.", 
+                color=discord.Color.red(), 
+                timestamp=datetime.now()
+            )
+            embed.add_field(name="Try" , value="Contact staff or an administrator")
+            embed.set_footer(text="Parry | Errors")
+            await ctx.respond(embed=embed, delete_after=20, ephemeral=True)
     # log_message command ^
 
 def setup(bot):

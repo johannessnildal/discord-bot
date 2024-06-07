@@ -6,6 +6,7 @@ bot = discord.Bot()
 prefix = os.getenv("PREFIX")
 
 cogname = "Parry | Info"
+cogcolor = discord.Color.from_rgb(117,201,177) # Parry's avatar green
 
 class Info(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +24,7 @@ class Info(commands.Cog):
                 embed = discord.Embed(
                     title="Here ya go!",
                     description=f"My prefix is `{prefix}`",
-                    color=discord.Color.from_rgb(117,201,177)
+                    color=cogcolor
                 )
                 embed.set_footer(text="Note: Say 'Hello Parry' again before asking more questions!" )
                 await message.channel.send(embed=embed)
@@ -33,7 +34,7 @@ class Info(commands.Cog):
                 embed = discord.Embed(
                     title="🏓 Pong!",
                     description=f"Latency: **{round(self.bot.latency * 1000)}ms**",
-                    color=discord.Color.from_rgb(117,201,177)
+                    color=cogcolor
                 )
                 embed.set_footer(text="Note: Say 'Hello Parry' again before asking more questions!" )
                 await message.channel.send(embed=embed)
@@ -43,7 +44,7 @@ class Info(commands.Cog):
                 embed = discord.Embed(
                     title="🔗 Here's ya link!",
                     description="[Parry Invite Link](https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=8&scope=applications.commands%20bot)",
-                    color=discord.Color.from_rgb(117,201,177)
+                    color=cogcolor
                 )
                 embed.set_footer(text="Note: Say 'Hello Parry' again before asking more questions!" )
                 await message.channel.send(embed=embed)
@@ -52,7 +53,7 @@ class Info(commands.Cog):
         elif message.content.lower() == "hello parry":
             embed = discord.Embed(
                 title="🦜 Ahoy there!",
-                color=discord.Color.from_rgb(117,201,177)
+                color=cogcolor
             )
             embed.add_field(name="Here's some stuff ya can ask me!", value="`prefix` `ping` `link`", inline=False)
             await message.channel.send(embed=embed)

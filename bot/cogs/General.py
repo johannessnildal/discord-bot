@@ -54,6 +54,20 @@ class General(commands.Cog):
                     description="Log a message to the moderation log. This command is accessed by right clicking a message and selecting 'Apps'.",
                     color=moderation_color
                 )
+            elif command == "lock":
+                embed = discord.Embed(
+                    title=f"/lock | admin",
+                    description="Lock the current channel, preventing users from sending messages.",
+                    color=moderation_color
+                )
+                embed.add_field(name="Usage", value=f"`/lock`", inline=False)
+            elif command == "unlock":
+                embed = discord.Embed(
+                    title=f"/unlock | admin",
+                    description="Unlock the current channel, allowing users to send messages again.",
+                    color=moderation_color
+                )
+                embed.add_field(name="Usage", value=f"`/unlock`", inline=False)
             else:
                 embed = discord.Embed(
                     title="⚠️ Error",
@@ -71,8 +85,9 @@ class General(commands.Cog):
             embed.add_field(name="Important", value="`.` are prefix commands, `/` are app commands, `[]` are message commands (message commands are accessed by right clicking a message -> apps)", inline=False)
             embed.add_field(name="General", value="`/help` `/link`", inline=False)
             embed.add_field(name="Further help", value="By saying 'hello parry' in chat (without prefix), you unlock a set of helpful info you can ask for. Like:\n`prefix` `ping` `link`", inline=False)
-            embed.add_field(name="Moderation", value=f"`{prefix}clear` `/log_channel` `[]log_message`", inline=False)
             embed.add_field(name="Info", value=f"`/userinfo` `/serverinfo`", inline=False)
+            embed.add_field(name="Moderation", value=f"`{prefix}clear` `/log_channel` `[]log_message`", inline=False)
+            embed.add_field(name="Admin", value="`/lock` `/unlock`", inline=False)
             embed.add_field(name="🤐 Psst!", value="Parry is a bird of many secrets. Find out if you can!", inline=False)
             embed.set_footer(text="Use `/help <command>` to get detailed information about a specific command.")
         await ctx.respond(embed=embed)

@@ -7,8 +7,9 @@ bot = discord.Bot()
 prefix = os.getenv("PREFIX")
 
 general_color = discord.Color.blue()
-moderation_color = discord.Color.brand_red()
 info_color = discord.Color.brand_green()
+moderation_color = discord.Color.brand_red()
+admin_color = discord.Color.from_rgb(0,0,0)
 error_color = discord.Color.orange()
 
 class General(commands.Cog):
@@ -58,14 +59,14 @@ class General(commands.Cog):
                 embed = discord.Embed(
                     title=f"/lock | admin",
                     description="Lock the current channel, preventing users from sending messages.",
-                    color=moderation_color
+                    color=admin_color
                 )
                 embed.add_field(name="Usage", value=f"`/lock`", inline=False)
             elif command == "unlock":
                 embed = discord.Embed(
                     title=f"/unlock | admin",
                     description="Unlock the current channel, allowing users to send messages again.",
-                    color=moderation_color
+                    color=admin_color
                 )
                 embed.add_field(name="Usage", value=f"`/unlock`", inline=False)
             else:
